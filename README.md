@@ -2,6 +2,18 @@
 
 Windows 本地桌面流程助手，最终版本 **v1.7**。手动编排、录制并编辑鼠标键盘动作，保存流程后重复执行。
 
+## 选择使用方式
+
+| 方式 | 适合谁 | 操作 |
+| --- | --- | --- |
+| **[下载 Windows 便携版（推荐）](https://github.com/Felicitate555/screen-auto-clicker/releases/download/v1.7/screen-auto-clicker-v1.7-windows-x64.zip)** | 直接使用软件 | 下载 ZIP → 全部解压 → 双击 `屏幕流程助手.exe`。无需安装 Python 或开发依赖。 |
+| **[下载源码包](https://github.com/Felicitate555/screen-auto-clicker/releases/download/v1.7/screen-auto-clicker-v1.7-source.zip)** | 想修改代码或用源码运行 | 安装 Python 3.12 → 解压源码 → 双击 `start-source.cmd`，自动创建环境、安装依赖并启动。首次需要联网下载依赖。 |
+| **自行打包 EXE** | 开发者 | 按下方“从源码运行”配置环境，再运行 `python build.py`。 |
+
+便携版适用于 **Windows 10/11 x64**。请解压完整目录后运行，保留旁边的 `_internal` 文件夹。选定自己的流程后才会执行操作。
+
+所有下载和版本说明都在 **[v1.7 发布页面](https://github.com/Felicitate555/screen-auto-clicker/releases/tag/v1.7)**；`SHA256SUMS.txt` 提供下载文件校验值。
+
 ## 功能
 
 - 打开 EXE、坐标单击/双击、快捷键、输入文字、等待与滚动。
@@ -23,6 +35,8 @@ Windows 本地桌面流程助手，最终版本 **v1.7**。手动编排、录制
 ## 从源码运行
 
 需要 Windows 10/11 x64、Python 3.12。坐标取决于窗口位置、分辨率和缩放；改变后请重新取点。输入前先安排点击目标输入框。
+
+可以双击 `start-source.cmd`，也可以手动执行：
 
 ```powershell
 py -3.12 -m venv .venv
