@@ -272,7 +272,8 @@ class App(ctk.CTk):
             tools.pack(fill='x', pady=7)
             self.button(tools, '插入验证码', self.insert_code, width=130).pack(side='left', padx=(0, 8))
             self.button(tools, '插入手机号', self.insert_phone, width=130).pack(side='left')
-            self.hint('{{code}} 为新六位数字；{{phone}} 为新十一位手机号。先安排点击输入框的步骤。中文通过粘贴输入。')
+            self.button(self.editor, '插入视频评价', self.insert_praise, width=150).pack(anchor='w', pady=(0, 6))
+            self.hint('{{praise}} 从 100 句爱国主题视频评价中随机选一句，每句不超过 10 字。{{code}} 为六位数字；{{phone}} 为手机号。先安排点击输入框。')
         elif step.kind in READ_KINDS:
             phone_mode = step.kind == 'read_phone'
             if phone_mode:
@@ -616,6 +617,10 @@ class App(ctk.CTk):
     def insert_phone(self):
         if not self.busy() and 'text' in self.fields:
             self.fields['text'].insert('insert', '{{phone}}')
+
+    def insert_praise(self):
+        if not self.busy() and 'text' in self.fields:
+            self.fields['text'].insert('insert', '{{praise}}')
 
     def change_read_source(self, label):
         if self.busy() or not self.current() or self.current().kind != 'read':

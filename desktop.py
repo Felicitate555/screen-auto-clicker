@@ -227,6 +227,9 @@ class Desktop:
                     if phone is None:
                         raise ValueError('本次运行还没有获取到新十一位手机号')
                     text = text.replace('{{phone}}', phone)
+                if '{{praise}}' in text:
+                    from praise_library import next_praise
+                    text = text.replace('{{praise}}', next_praise())
                 self.clipboard.set(text)
                 self.keyboard.press(keyboard.Key.ctrl)
                 try:
