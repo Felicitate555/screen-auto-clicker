@@ -1,0 +1,12 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+build/
+dist/
+qa*/
+flows/
+*.spec
+*.log
+.env*
+启动错误.txt

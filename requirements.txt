@@ -1,0 +1,10 @@
+customtkinter==5.2.2
+pynput==1.8.1
+Pillow==11.3.0
+rapidocr_onnxruntime==1.4.4
+onnxruntime==1.31.0
+numpy==2.5.4
+opencv-python==5.0.0.93
+pyinstaller==6.16.0
+uiautomation==2.0.29
+comtypes==1.4.17
