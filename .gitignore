@@ -10,3 +10,6 @@ flows/
 *.log
 .env*
 启动错误.txt
+
+# Private runtime text libraries must never be committed.
+私人文字库*.json

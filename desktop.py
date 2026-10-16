@@ -1,5 +1,6 @@
 """Windows input, local OCR and explicit-session recording adapters."""
 import copy
+import sys
 import ctypes
 from ctypes import wintypes
 import statistics
@@ -169,6 +170,13 @@ class Clipboard:
 
 
 class Desktop:
+    def custom_library(self):
+        from custom_library import CustomLibrary
+        if not hasattr(self, '_custom_library'):
+            directory = Path(sys.executable).parent if getattr(sys, 'frozen', False) else Path(__file__).parent
+            self._custom_library = CustomLibrary(directory / '私人文字库.json')
+        return self._custom_library
+
     def __init__(self):
         self.mouse = mouse.Controller()
         self.keyboard = keyboard.Controller()
@@ -230,6 +238,8 @@ class Desktop:
                 if '{{praise}}' in text:
                     from praise_library import next_praise
                     text = text.replace('{{praise}}', next_praise())
+                if '{{custom}}' in text:
+                    text = text.replace('{{custom}}', self.custom_library().next_value())
                 self.clipboard.set(text)
                 self.keyboard.press(keyboard.Key.ctrl)
                 try:

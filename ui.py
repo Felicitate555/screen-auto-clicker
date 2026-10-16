@@ -87,8 +87,7 @@ class App(ctk.CTk):
         header.grid(row=0, column=0, sticky='ew')
         ctk.CTkLabel(header, text='屏幕流程助手', font=('Microsoft YaHei UI', 25, 'bold'),
                      text_color=INK).pack(side='left', padx=24, pady=16)
-        ctk.CTkLabel(header, text='手动编排 / 本地保存', font=self.font,
-                     text_color=MUTED).pack(side='left', padx=8)
+        self.button(header, '自定义文字库', self.edit_custom_library, editable=True, width=130).pack(side='left', padx=8)
         ctk.CTkLabel(header, text='运行次数', font=self.font, text_color=MUTED).pack(side='left', padx=(12, 5))
         self.repeat_entry = ctk.CTkEntry(header, textvariable=self.repeat_var, width=70, height=34, font=self.font)
         self.repeat_entry.pack(side='left')
@@ -273,6 +272,8 @@ class App(ctk.CTk):
             self.button(tools, '插入验证码', self.insert_code, width=130).pack(side='left', padx=(0, 8))
             self.button(tools, '插入手机号', self.insert_phone, width=130).pack(side='left')
             self.button(self.editor, '插入视频评价', self.insert_praise, width=150).pack(anchor='w', pady=(0, 6))
+            self.button(self.editor, '插入自定义内容', self.insert_custom, width=150).pack(anchor='w', pady=(0, 6))
+            self.hint('{{custom}} 调用顶部“自定义文字库”。每行一条，可顺序循环、随机选择或填入全部；仅保存在本机。')
             self.hint('{{praise}} 从 100 句爱国主题视频评价中随机选一句，每句不超过 10 字。{{code}} 为六位数字；{{phone}} 为手机号。先安排点击输入框。')
         elif step.kind in READ_KINDS:
             phone_mode = step.kind == 'read_phone'
@@ -617,6 +618,46 @@ class App(ctk.CTk):
     def insert_phone(self):
         if not self.busy() and 'text' in self.fields:
             self.fields['text'].insert('insert', '{{phone}}')
+
+    def insert_custom(self):
+        if not self.busy() and 'text' in self.fields:
+            self.fields['text'].insert('insert', '{{custom}}')
+
+    def edit_custom_library(self):
+        if self.busy():
+            return
+        try:
+            library = self.desktop.custom_library()
+        except (OSError, ValueError) as error:
+            messagebox.showerror('无法打开文字库', str(error), parent=self)
+            return
+        dialog = ctk.CTkToplevel(self)
+        dialog.title('自定义文字库 · 仅保存在本机')
+        dialog.geometry('680x650')
+        dialog.transient(self)
+        ctk.CTkLabel(dialog, text='每行一条内容，可直接粘贴号码或评价。使用 {{custom}} 调用。',
+                     font=self.font).pack(anchor='w', padx=20, pady=(18, 8))
+        ctk.CTkLabel(dialog, text=f'共 {len(library.items)} 条；顺序模式下次取第 {library.index + 1} 条。保存后从第一条开始。',
+                     font=self.font).pack(anchor='w', padx=20, pady=(0, 8))
+        text = ctk.CTkTextbox(dialog, font=self.font, wrap='none')
+        text.pack(fill='both', expand=True, padx=20, pady=6)
+        text.insert('1.0', '\n'.join(library.items))
+        modes = {'顺序循环（每次一条）': 'sequential', '随机选择（每次一条）': 'random', '全部内容（每行一条）': 'all'}
+        mode = ctk.CTkOptionMenu(dialog, values=list(modes), font=self.font, dropdown_font=self.font, width=250)
+        mode.pack(anchor='w', padx=20, pady=10)
+        mode.set(next(label for label, value in modes.items() if value == library.mode))
+
+        def save():
+            try:
+                library.save(text.get('1.0', 'end-1c').splitlines(), modes[mode.get()])
+            except (OSError, ValueError) as error:
+                messagebox.showerror('保存失败', str(error), parent=dialog)
+                return
+            self.log(f'本地自定义文字库已保存：{len(library.items)} 条，使用 {{{{custom}}}} 调用')
+            dialog.destroy()
+
+        self.button(dialog, '保存文字库', save, primary=True, width=150).pack(anchor='e', padx=20, pady=(4, 18))
+        dialog.after(100, dialog.grab_set)
 
     def insert_praise(self):
         if not self.busy() and 'text' in self.fields:
